@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWW Game Protocol — Free LEDS™ Energy Scan</title>
+<meta name="description" content="Score your life across 4 energy indexes in under 3 minutes. Built for streamers, content creators, and work-from-home teams. Stay in the game. Protect your energy.">
+<meta property="og:title" content="OWW Game Protocol — What's your Energy Rating?">
+<meta property="og:description" content="Free LEDS™ scan for streamers, creators, and WFH teams. Score your life 0–100 in under 3 minutes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#0f0e0a; --dark2:#1a1810; --dark3:#242118;
+  --cream:#faf5ee; --text:#e8e0d0; --dim:#8a7f6a;
+  --gold:#c4973a; --gold-light:#e8c06a;
+  --teal:#00e5c8; --teal2:#00b5a0;
+  --s5:#00c853; --s4:#64dd17; --s3:#ffd600; --s2:#ff6d00; --s1:#d50000;
+  --border:#3a352a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px 80px}
+header{position:sticky;top:0;z-index:10;background:rgba(15,14,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--dark3)}
+.hin{max-width:640px;margin:0 auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+.brand-eyebrow{font-size:10px;letter-spacing:4px;color:var(--gold)}
+.brand-name{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--cream)}
+.leds-badge{font-size:11px;letter-spacing:2px;color:var(--teal);border:1px solid var(--teal);border-radius:16px;padding:4px 12px;background:rgba(0,229,200,.06)}
+.screen{display:none;animation:fadeUp .45s ease}
+.screen.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h1{font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:clamp(30px,6vw,42px);color:var(--cream);line-height:1.12;margin:18px 0 12px}
+.sub{color:var(--dim);font-size:15px;line-height:1.65;max-width:480px}
+.pill{display:inline-block;background:rgba(0,229,200,.07);color:var(--teal);font-size:11px;letter-spacing:2px;padding:5px 14px;border-radius:16px;border:1px solid rgba(0,229,200,.4);margin-top:28px}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 28px}
+.chip{background:var(--dark2);border:1px solid var(--border);color:var(--text);padding:12px 20px;border-radius:12px;cursor:pointer;font-size:14px;font-family:inherit;transition:all .18s}
+.chip:hover{border-color:var(--gold);transform:translateY(-2px)}
+.chip.sel{border-color:var(--teal);color:var(--teal);background:rgba(0,229,200,.06)}
+.cta{background:var(--gold);color:var(--dark);border:none;padding:15px 28px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
+.cta:hover{background:var(--gold-light);transform:translateY(-2px)}
+.cta:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.stats{display:flex;gap:28px;margin-top:36px;border-top:1px solid var(--dark3);padding-top:20px}
+.stat-n{font-family:'Fraunces',serif;font-size:24px;color:var(--gold-light)}
+.stat-l{font-size:12px;color:var(--dim)}
+.qmeta{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin:30px 0 10px}
+.qmeta .xp{color:var(--teal)}
+.bar{height:10px;background:var(--dark3);border-radius:6px;overflow:hidden}
+.bar>div{height:100%;border-radius:6px;transition:width .9s cubic-bezier(.22,1,.36,1)}
+.qindex{font-size:11px;letter-spacing:3px;color:var(--gold);margin:30px 0 8px}
+.qtext{font-family:'Fraunces',serif;font-size:clamp(20px,4vw,26px);color:var(--cream);margin-bottom:20px;line-height:1.3}
+.ans{display:block;width:100%;text-align:left;background:var(--dark2);border:1px solid var(--border);color:var(--text);padding:15px 18px;border-radius:12px;cursor:pointer;font-size:15px;margin-bottom:10px;font-family:inherit;transition:all .15s}
+.ans:hover{border-color:var(--teal);background:#12211e;transform:translateX(4px)}
+.note{font-size:13px;color:var(--dim);margin-top:14px;font-style:italic}
+.gate{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:30px}
+.gate input[type=email]{width:100%;background:var(--dark);border:1px solid var(--border);color:var(--text);padding:14px 16px;border-radius:12px;font-size:15px;font-family:inherit;margin:14px 0}
+.gate input[type=email]:focus{outline:none;border-color:var(--teal)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--dim);margin:4px 0 18px;cursor:pointer;line-height:1.5}
+.check input{margin-top:3px;accent-color:var(--teal)}
+.err{color:var(--s2);font-size:13px;margin-top:10px;display:none}
+.score-hero{text-align:center;margin:36px 0 30px}
+.score-label{font-size:11px;letter-spacing:3px;color:var(--dim)}
+.score-big{font-family:'Fraunces',serif;font-size:clamp(64px,14vw,88px);font-weight:700;color:var(--gold-light);line-height:1}
+.score-big small{font-size:26px;color:var(--dim);font-weight:600}
+.tier{display:inline-block;margin-top:10px;font-size:13px;padding:6px 18px;border-radius:16px;border:1px solid}
+.idx-row{margin-bottom:16px}
+.idx-head{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}
+.idx-head .val{font-weight:700}
+.debuff{background:var(--dark2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;padding:18px 20px;margin:26px 0;font-size:14px;line-height:1.7}
+.debuff b{color:var(--gold-light)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.ghost{background:var(--dark2);border:1px solid var(--border);color:var(--text);padding:12px 18px;border-radius:12px;cursor:pointer;font-size:14px;font-family:inherit;transition:all .18s}
+.ghost:hover{border-color:var(--teal);color:var(--teal)}
+.xp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark2);border:1px solid var(--teal);color:var(--teal);padding:12px 22px;border-radius:24px;font-size:14px;transition:transform .4s cubic-bezier(.22,1,.36,1);z-index:20}
+.xp-toast.show{transform:translateX(-50%) translateY(0)}
+.selenite{border-top:1px solid var(--dark3);margin-top:34px;padding-top:20px;font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--dim);line-height:1.6}
+.waitmark{display:inline-flex;align-items:center;gap:8px;color:var(--s4);font-size:13px;margin-top:14px}
+footer{max-width:640px;margin:40px auto 0;padding:20px;border-top:1px solid var(--dark3);font-size:12px;color:var(--dim);text-align:center;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="hin">
+  <div><div class="brand-eyebrow">ORGANIC WORLD WELLNESS</div><div class="brand-name">Game Protocol</div></div>
+  <div class="leds-badge">LEDS™ SCAN</div>
+</div></header>
+
+<div class="wrap">
+
+<!-- LANDING -->
+<section id="s-landing" class="screen on">
+  <div class="pill">FREE ENERGY SCAN · UNDER 3 MINUTES</div>
+  <h1>Stay in the game.<br>Protect your energy.</h1>
+  <p class="sub">Your setup, your fuel, your gear, your circle — every one of them either feeds your energy or drains it. Score your life across 4 energy indexes and find your main debuff. Because performance without wellness eventually collapses.</p>
+  <p style="font-size:13px;color:var(--dim);margin:26px 0 6px">I am a…</p>
+  <div class="chips" id="personas">
+    <button class="chip sel" data-p="streamer">🎙 Streamer</button>
+    <button class="chip" data-p="creator">🎬 Content creator</button>
+    <button class="chip" data-p="wfh">💻 WFH professional / team</button>
+  </div>
+  <button class="cta" onclick="startQuiz()">Get my Energy Rating →</button>
+  <div class="stats">
+    <div><div class="stat-n">10</div><div class="stat-l">questions</div></div>
+    <div><div class="stat-n">4</div><div class="stat-l">energy indexes</div></div>
+    <div><div class="stat-n">0–100</div><div class="stat-l">Energy Rating</div></div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="s-quiz" class="screen">
+  <div class="qmeta"><span id="qlab"></span><span class="xp">+50 XP on completion</span></div>
+  <div class="bar"><div id="qbar" style="width:0%;background:var(--teal)"></div></div>
+  <div class="qindex" id="qidx"></div>
+  <div class="qtext" id="qtext"></div>
+  <div id="qopts"></div>
+  <p class="note">No judgment here. The goal is not perfection — the goal is progression.</p>
+</section>
+
+<!-- EMAIL GATE -->
+<section id="s-gate" class="screen">
+  <div class="pill">SCAN COMPLETE</div>
+  <h1>Your Energy Rating is ready.</h1>
+  <p class="sub">Drop your email to reveal your score, see your main debuff, and lock your spot on the Game Protocol waitlist — daily quests, an AI wellness assistant, and XP for taking care of yourself are coming.</p>
+  <div class="gate">
+    <label style="font-size:13px;color:var(--dim)">Where do we send your full breakdown?</label>
+    <input type="email" id="email" placeholder="you@twitch.tv" autocomplete="email">
+    <label class="check"><input type="checkbox" id="team"> I also want to score my whole team — esports org, creator collective, or remote company (Team Protocol, from $2,500)</label>
+    <button class="cta" id="revealBtn" onclick="submitLead()">Reveal my Energy Rating →</button>
+    <div class="err" id="err">That email doesn't look right — try again.</div>
+  </div>
+</section>
+
+<!-- REVEAL -->
+<section id="s-reveal" class="screen">
+  <div class="score-hero">
+    <div class="score-label">YOUR ENERGY RATING</div>
+    <div class="score-big"><span id="big">0</span><small>/100</small></div>
+    <div class="tier" id="tierChip"></div>
+    <div><span class="waitmark">✓ You're on the Game Protocol waitlist</span></div>
+  </div>
+  <div id="bars"></div>
+  <div class="debuff" id="debuff"></div>
+  <div class="actions">
+    <button class="ghost" onclick="shareCard()">⤴ Share my score card</button>
+    <a class="ghost" style="text-decoration:none" id="teamMail" href="#">👥 Score my whole team</a>
+  </div>
+  <div class="selenite">"I will show up for you every day — not because you earned it, but because you are in the process of becoming something. And that process deserves a witness." — Selenite</div>
+</section>
+
+</div>
+
+<div class="xp-toast" id="toast">⚡ +50 XP earned · Level 1: Spawned</div>
+
+<footer>ORGANIC WORLD WELLNESS · Game Protocol · LEDS™ Life Energy Diagnostic System<br>Not medical advice. Every environment feeds or drains human energy. · oww.life</footer>
+
+<script>
+var persona='streamer';
+document.getElementById('personas').addEventListener('click',function(e){
+  var b=e.target.closest('.chip'); if(!b)return;
+  document.querySelectorAll('#personas .chip').forEach(function(c){c.classList.remove('sel')});
+  b.classList.add('sel'); persona=b.dataset.p;
+});
+
+var IDX={hei:{label:'BASE STATS · HEI™',name:'Base stats',full:'Home Energy Index',icon:'🏠'},
+         fei:{label:'FUEL LEVEL · FEI™',name:'Fuel level',full:'Food Energy Index',icon:'🍎'},
+         cei:{label:'GEAR SCORE · CEI™',name:'Gear score',full:'Clothing Energy Index',icon:'👕'},
+         rei:{label:'PARTY HEALTH · REI™',name:'Party health',full:'Relationship Energy Index',icon:'🤝'}};
+
+var Q=[
+ {x:'hei',t:'How does your setup space feel when you sit down to start?',o:[['A sanctuary — clean, lit, intentional',25],['Decent, but it could breathe better',17],['Cluttered, but I make it work',9],['A cave I never leave',3]]},
+ {x:'hei',t:'Natural light and fresh air during your day?',o:[['Light managed, windows opened daily',25],['Some light, airflow is rare',17],['Blackout mode most days',9],['What is “outside”?',3]]},
+ {x:'hei',t:'How was your sleep last night?',o:[['7+ solid hours, real rest',25],['5–6 hours, functional',17],['Broken, restless sleep',9],['I slept when the session ended',3]]},
+ {x:'fei',t:'What does a typical session snack look like?',o:[['Whole foods — fruit, nuts, real fuel',25],['Mixed — some real food, some packaged',17],['Mostly packaged or fast food',9],['Energy drinks are a food group, right?',3]]},
+ {x:'fei',t:'Water today — honestly?',o:[['64oz+ and steady',25],['A few glasses',17],['Mostly caffeine',9],['Dehydrated and vibing',3]]},
+ {x:'fei',t:'Your first meal of the day is usually…',o:[['Real, cooked food',25],['Something quick but decent',17],['Whatever is fastest',9],['Coffee is a meal',3]]},
+ {x:'cei',t:'What are you wearing during a long session?',o:[['Natural fabrics — cotton, linen, loose fit',25],['Comfortable but synthetic',17],['Whatever I slept in',9],['Full merch, tags still on',3]]},
+ {x:'cei',t:'What do you sleep in?',o:[['Breathable natural fabric',25],['A cotton-ish mix',17],['The same clothes as the day',9],['I fell asleep in the chair',3]]},
+ {x:'rei',t:'The people around you — do they charge you or drain you?',o:[['My circle charges me',25],['Mostly good energy',17],['A mixed lobby',9],['Surrounded by energy vampires',3]]},
+ {x:'rei',t:'After a long session, how present are you with the people in your life?',o:[['Present and connected',25],['Short, but warm',17],['Irritable, low patience',9],['Do not disturb — permanently',3]]}
+];
+
+var qi=0, answers=[];
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});document.getElementById(id).classList.add('on');window.scrollTo({top:0,behavior:'smooth'})}
+function startQuiz(){qi=0;answers=[];show('s-quiz');renderQ()}
+function renderQ(){
+  var q=Q[qi];
+  document.getElementById('qlab').textContent='Question '+(qi+1)+' of '+Q.length;
+  document.getElementById('qbar').style.width=Math.round(qi/Q.length*100)+'%';
+  document.getElementById('qidx').textContent=IDX[q.x].label;
+  document.getElementById('qtext').textContent=q.t;
+  var h='';
+  q.o.forEach(function(o,i){h+='<button class="ans" onclick="answer('+i+')">'+o[0]+'</button>'});
+  document.getElementById('qopts').innerHTML=h;
+}
+function answer(i){
+  answers.push({x:Q[qi].x,v:Q[qi].o[i][1]});
+  qi++;
+  if(qi<Q.length){renderQ()}else{document.getElementById('qbar').style.width='100%';setTimeout(function(){show('s-gate')},350)}
+}
+function calc(){
+  var g={hei:[],fei:[],cei:[],rei:[]};
+  answers.forEach(function(a){g[a.x].push(a.v)});
+  var s={};
+  for(var k in g){var arr=g[k];s[k]=arr.length?Math.round(arr.reduce(function(a,b){return a+b},0)/arr.length):0}
+  s.total=s.hei+s.fei+s.cei+s.rei;
+  return s;
+}
+function tierOf(t){
+  if(t>=75)return{n:'Thriving',c:'#00c853',r:'75–100'};
+  if(t>=50)return{n:'Progressing',c:'#ffd600',r:'50–74'};
+  if(t>=25)return{n:'At Risk',c:'#ff6d00',r:'25–49'};
+  return{n:'Critical',c:'#d50000',r:'0–24'};
+}
+function colorOf(v){if(v>=21)return'#00c853';if(v>=16)return'#64dd17';if(v>=11)return'#ffd600';if(v>=6)return'#ff6d00';return'#d50000'}
+var FIX={
+ hei:'Open one window today. Get real light on your face before your first session. Clear one square foot of the desk. Base stats climb fast when the base gets air.',
+ fei:'One real meal before you go live. 64oz of water where you can see it. Swap one packaged snack for something that grew from the ground. Fuel is the fastest buff in the whole system.',
+ cei:'Get natural fabric against your skin for your longest sessions — cotton first. Change before sleep, every night. Your gear is touching you 24/7; make it work for you.',
+ rei:'One honest check-in with someone who charges you — today, not this weekend. Protect your energy from the drains. Your party heals you or wipes you.'
+};
+var scores=null;
+function submitLead(){
+  var email=document.getElementById('email').value.trim();
+  var ok=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  var err=document.getElementById('err');
+  if(!ok){err.style.display='block';return}
+  err.style.display='none';
+  var btn=document.getElementById('revealBtn');btn.disabled=true;btn.textContent='Calculating…';
+  scores=calc();
+  var t=tierOf(scores.total);
+  var payload={email:email,persona:persona,hei:scores.hei,fei:scores.fei,cei:scores.cei,rei:scores.rei,total:scores.total,tier:t.n,team_interest:document.getElementById('team').checked,source:'game-protocol-quiz'};
+  fetch('https://mharwydzdfjdfmkpnclf.supabase.co/rest/v1/leads',{method:'POST',headers:{'Content-Type':'application/json','apikey':'sb_publishable_31m6AgVL37ALdprB0Nk5SQ_t7XY8EWq','Authorization':'Bearer sb_publishable_31m6AgVL37ALdprB0Nk5SQ_t7XY8EWq','Prefer':'return=minimal'},body:JSON.stringify(payload)}).catch(function(){});
+  setTimeout(function(){btn.disabled=false;btn.textContent='Reveal my Energy Rating →';reveal(t)},600);
+}
+function reveal(t){
+  show('s-reveal');
+  var chip=document.getElementById('tierChip');
+  chip.textContent=t.n+' · '+t.r; chip.style.color=t.c; chip.style.borderColor=t.c; chip.style.background='rgba(255,255,255,.03)';
+  var order=['hei','fei','cei','rei'];
+  var weakest=order.reduce(function(a,b){return scores[b]<scores[a]?b:a},'hei');
+  var h='';
+  order.forEach(function(k){
+    var c=colorOf(scores[k]);
+    var tag=(k===weakest)?' · main debuff':'';
+    h+='<div class="idx-row"><div class="idx-head"><span>'+IDX[k].icon+' '+IDX[k].name+' · '+k.toUpperCase()+'™</span><span class="val" style="color:'+c+'">'+scores[k]+'/25'+tag+'</span></div><div class="bar"><div data-w="'+(scores[k]/25*100)+'" style="width:0;background:'+c+'"></div></div></div>';
+  });
+  document.getElementById('bars').innerHTML=h;
+  document.getElementById('debuff').innerHTML='<b>Your '+IDX[weakest].name+' ('+IDX[weakest].full+') is the main debuff.</b><br>'+FIX[weakest]+'<br><span style="color:var(--dim)">Your full 30-day reset protocol is on its way to your inbox.</span>';
+  document.getElementById('teamMail').href='mailto:ghai@oww.life?subject=Team%20Protocol%20—%20score%20my%20team&body=We%20want%20the%20Game%20Protocol%20for%20our%20team.%20My%20Energy%20Rating%20was%20'+scores.total+'%2F100.';
+  var v=0,target=scores.total;
+  var iv=setInterval(function(){v+=Math.max(1,Math.round(target/40));if(v>=target){v=target;clearInterval(iv)}document.getElementById('big').textContent=v},30);
+  setTimeout(function(){document.querySelectorAll('#bars .bar>div').forEach(function(d){d.style.width=d.dataset.w+'%'})},250);
+  var toast=document.getElementById('toast');
+  setTimeout(function(){toast.classList.add('show')},1400);
+  setTimeout(function(){toast.classList.remove('show')},5200);
+}
+function shareCard(){
+  var c=document.createElement('canvas');c.width=1080;c.height=1080;var x=c.getContext('2d');
+  x.fillStyle='#0f0e0a';x.fillRect(0,0,1080,1080);
+  x.fillStyle='#c4973a';x.font='600 28px DM Sans, sans-serif';x.textAlign='center';
+  x.fillText('O R G A N I C   W O R L D   W E L L N E S S',540,120);
+  x.fillStyle='#faf5ee';x.font='italic 700 76px Fraunces, serif';x.fillText('Game Protocol',540,215);
+  x.fillStyle='#8a7f6a';x.font='500 30px DM Sans, sans-serif';x.fillText('MY ENERGY RATING',540,340);
+  var t=tierOf(scores.total);
+  x.fillStyle='#e8c06a';x.font='700 260px Fraunces, serif';x.fillText(scores.total,540,610);
+  x.fillStyle=t.c;x.font='700 44px DM Sans, sans-serif';x.fillText(t.n.toUpperCase(),540,700);
+  x.fillStyle='#e8e0d0';x.font='400 32px DM Sans, sans-serif';
+  x.fillText('Base '+scores.hei+'  ·  Fuel '+scores.fei+'  ·  Gear '+scores.cei+'  ·  Party '+scores.rei,540,790);
+  x.fillStyle='#00e5c8';x.font='500 34px DM Sans, sans-serif';x.fillText('Stay in the game. Protect your energy.',540,900);
+  x.fillStyle='#8a7f6a';x.font='400 28px DM Sans, sans-serif';x.fillText('game.oww.life',540,980);
+  var a=document.createElement('a');a.download='my-energy-rating.png';a.href=c.toDataURL('image/png');a.click();
+}
+</script>
+</body>
+</html>
